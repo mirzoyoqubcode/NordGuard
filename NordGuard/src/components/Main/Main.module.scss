@@ -1,0 +1,41 @@
+.main {
+  background-color: #fff;
+  .title {
+    padding: 20px;
+  }
+
+  .wrapper_drag_drop {
+    .drag_drop {
+      width: 738px;
+      margin: 3rem auto;
+      height: 400px;
+      border-radius: 49px;
+      background: #ebeff2;
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .wrapper_btn {
+      width: 700px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .btn_start {
+        padding: 1rem 2rem;
+        border-radius: 49px;
+        background: #39374c;
+        color: white;
+        cursor: pointer;
+      }
+      .select_type {
+        display: flex;
+        gap: 1rem;
+      }
+    }
+  }
+}
