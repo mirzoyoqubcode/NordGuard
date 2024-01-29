@@ -3,7 +3,30 @@
   .title {
     padding: 20px;
   }
-
+  .analyzing {
+    font-weight: 600;
+  }
+  .ready {
+    font-size: 30px;
+    font-weight: 600;
+  }
+  .loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    p {
+      font-size: 50px;
+      margin-left: 3rem;
+    }
+  }
+  .title_loading {
+    h1,
+    p {
+      font-size: 18px;
+    }
+    float: right;
+    margin-top: 2rem;
+  }
   .wrapper_drag_drop {
     .drag_drop {
       width: 738px;

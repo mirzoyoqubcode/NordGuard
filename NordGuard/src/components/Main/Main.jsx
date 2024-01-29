@@ -1,13 +1,30 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useState, useEffect } from "react";
 import styles from "./Main.module.scss";
 import { useDropzone } from "react-dropzone";
-const Main = () => {
-  const onDrop = useCallback((acceptedFiles) => {
-    // Do something with the files
+import Modal from "../Modal/Modal";
+import ReactLoading from "react-loading";
+const Main = ({ type, color }) => {
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 8000);
+    return () => clearTimeout(timeoutId);
   }, []);
+  const [displayText, setDisplayText] = useState("Analyzing ...");
+  useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDisplayText("Results are ready");
+    }, 8000);
+
+    return () => clearTimeout(timerId);
+  }, []);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const onDrop = useCallback((acceptedFiles) => {}, []);
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
   });
+
   return (
     <div className={styles.main}>
       <div className={styles.title}>
@@ -68,12 +85,41 @@ const Main = () => {
             )}
           </div>
           <div className={styles.wrapper_btn}>
-            <button className={styles.btn_start}>Start analyzing</button>
+            <button
+              className={styles.btn_start}
+              onClick={() => setModalOpen(true)}
+            >
+              Start analyzing
+            </button>
+            {isModalOpen && (
+              <Modal onClose={() => setModalOpen(false)}>
+                <div>
+                  {isLoading ? (
+                    <div className={styles.loading}>
+                      {" "}
+                      <ReactLoading
+                        type={"spokes"}
+                        color={"#262434"}
+                        height={"100px"}
+                        width={"100px"}
+                      />
+                      <p className={styles.analyzing}>{displayText}</p>
+                    </div>
+                  ) : (
+                    <p className={styles.ready}>{displayText}</p>
+                  )}
+                </div>
+                <div className={styles.title_loading}>
+                  <h1>NordGuard</h1>
+                  <p>Fraud detection</p>
+                </div>
+              </Modal>
+            )}
             <div className={styles.select_type}>
               <p>Select Filetype:</p>
               <select>
                 <option value=".csv">.csv</option>
-                <option value=".pdf">.pdf</option>
+                <option value=".xlxs">.xlxs</option>
               </select>
             </div>
           </div>
