@@ -1,5 +1,10 @@
 .main {
   background-color: #fff;
+  .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .lang {
     display: flex;
     align-items: center;
