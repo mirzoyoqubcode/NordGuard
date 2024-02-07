@@ -1,6 +1,9 @@
 import React from "react";
-import styles from "./Modal.module.scss";
+import style from "./Modal.module.scss";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 const Modal = ({ children, onClose }) => {
+  const { t } = useTranslation();
   const styles = {
     overlay: {
       position: "fixed",
@@ -39,6 +42,9 @@ const Modal = ({ children, onClose }) => {
           <button style={styles.closeButton} onClick={onClose}>
             X
           </button>
+          <Link to={"/details"} className={style.more}>
+            {t("more")} ...
+          </Link>
         </div>
       </div>
     </div>
