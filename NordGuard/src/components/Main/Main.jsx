@@ -4,7 +4,6 @@ import { useDropzone } from "react-dropzone";
 import Modal from "../Modal/Modal";
 import ReactLoading from "react-loading";
 import Papa from "papaparse";
-import * as XLSX from "xlsx";
 import { useTranslation } from "react-i18next";
 
 const Main = ({ type, color }) => {
@@ -57,36 +56,18 @@ const Main = ({ type, color }) => {
       try {
         setDisplayText("Processing file ...");
 
-        // Determine the file type
-        const fileType = getFileType(selectedFile);
-
-        // Convert the content based on the file type
-        let jsonData;
-        if (fileType === "csv") {
-          console.log("file type is csv");
-          const fileContent = await readFileContent(selectedFile, "csv");
-          jsonData = await csvToJson(fileContent);
-          console.log("JSON data before sending:", jsonData.slice(0, 10));
-        } else if (fileType === "xlsx") {
-          console.log("file type is xlsx");
-          const fileContent = await readFileContent(selectedFile, "xlsx");
-          jsonData = await xlsxToJson(fileContent);
-          console.log("JSON data before sending:", jsonData.slice(0, 10));
-        } else {
-          console.error("Unsupported file type");
-        }
+        // Create form data
+        const formData = new FormData();
+        formData.append('file', selectedFile);
 
         // API endpoint
-        const apiUrl = "http://46.101.254.252:2000/predict";
+        const apiUrl = "http://127.0.0.1:5000/upload";  // Assuming backend is running on the same server
 
         // Make API call
         setDisplayText("Analyzing ...");
         const response = await fetch(apiUrl, {
           method: "POST",
-          body: JSON.stringify({ data: jsonData }),
-          headers: {
-            "Content-Type": "application/json",
-          },
+          body: formData,
         });
 
         console.log("Response status from backend:", response.status);
@@ -96,9 +77,9 @@ const Main = ({ type, color }) => {
           const result = await response.json();
 
           // Check if the predictions are available and not empty
-          if (result && result.length > 0) {
+          if (result && result['predictions']) {
             // Save the predictions as a CSV file
-            savePredictionsAsCSV(result);
+            savePredictionsAsCSV(result['predictions']);
           }
 
           setDisplayText("Results are ready!");
@@ -123,37 +104,6 @@ const Main = ({ type, color }) => {
     }
   };
 
-  const readFileContent = (file, type) => {
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-
-      fileReader.onload = (event) => {
-        resolve(event.target.result);
-      };
-
-      fileReader.onerror = (error) => {
-        reject(error);
-      };
-
-      if (type === "csv") {
-        fileReader.readAsText(file);
-      } else if (type === "xlsx") {
-        fileReader.readAsArrayBuffer(file);
-      }
-    });
-  };
-
-  const getFileType = (file) => {
-    const fileName = file.name.toLowerCase();
-    if (fileName.endsWith(".csv")) {
-      return "csv";
-    } else if (fileName.endsWith(".xlsx") || fileName.endsWith(".xls")) {
-      return "xlsx";
-    } else {
-      throw new Error("Unsupported file type");
-    }
-  };
-
   const savePredictionsAsCSV = (predictions) => {
     // Convert predictions to CSV format
     const csvContent = Papa.unparse(predictions);
@@ -162,33 +112,8 @@ const Main = ({ type, color }) => {
     const blob = new Blob([csvContent], { type: "text/csv" });
     const link = document.createElement("a");
     link.href = URL.createObjectURL(blob);
-    link.download = "predictions.csv";
+    link.download = `predictions_${new Date().toISOString()}.csv`;
     link.click();
-  };
-
-  const csvToJson = async (csvContent) => {
-    return new Promise((resolve, reject) => {
-      Papa.parse(csvContent, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (result) => {
-          resolve(result.data);
-        },
-        error: (error) => {
-          reject(error.message);
-        },
-      });
-    });
-  };
-
-  const xlsxToJson = async (xlsxContent) => {
-    const data = new Uint8Array(xlsxContent);
-    const workbook = XLSX.read(data, { type: "array" });
-    const jsonData = XLSX.utils.sheet_to_json(
-      workbook.Sheets[workbook.SheetNames[0]],
-      { header: 0 }
-    );
-    return jsonData;
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -210,7 +135,7 @@ const Main = ({ type, color }) => {
             >
               <img
                 src="https://flagcdn.com/w20/us.png"
-                srcset="https://flagcdn.com/w40/us.png 2x"
+                srcSet="https://flagcdn.com/w40/us.png 2x"
                 width="20"
                 alt="United States"
               />
@@ -222,7 +147,7 @@ const Main = ({ type, color }) => {
             >
               <img
                 src="https://flagcdn.com/w20/ru.png"
-                srcset="https://flagcdn.com/w40/ru.png 2x"
+                srcSet="https://flagcdn.com/w40/ru.png 2x"
                 width="20"
                 alt="Russia"
               />
@@ -234,7 +159,7 @@ const Main = ({ type, color }) => {
             >
               <img
                 src="https://flagcdn.com/w20/uz.png"
-                srcset="https://flagcdn.com/w40/uz.png 2x"
+                srcSet="https://flagcdn.com/w40/uz.png 2x"
                 width="20"
                 alt="Germany"
               />
