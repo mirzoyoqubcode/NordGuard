@@ -37,6 +37,7 @@
     }
   }
   .btn_details1 {
+    gap: 0.8rem;
     display: flex;
     justify-content: space-evenly;
     margin: 2rem 0;
@@ -53,20 +54,23 @@
       display: flex;
       align-items: center;
       margin-bottom: 2rem;
-      width: 500px;
+      width: 750px;
       background-color: #cdd1d7;
       font-size: 18px;
       border-radius: 49px;
       p {
         cursor: pointer;
+        margin-left: 20rem;
       }
       .inner {
         margin-right: 10px;
         background-color: #39374c;
-        width: 250px;
+        width: 300px;
         padding: 20px 25px;
         outline: none;
         border-radius: 49px;
+        text-align: center;
+        color: #cdd1d7;
       }
     }
   }
